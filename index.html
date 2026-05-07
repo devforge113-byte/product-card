@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Карточка товара</title>
+<title>Карточка товара — две версии</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
@@ -21,16 +21,59 @@ body{
     color:#fff;
 }
 
-/* SIDEBAR */
+/* ПЕРЕКЛЮЧАТЕЛИ ВЕРСИЙ */
+.switcher{
+    display:flex;
+    gap:10px;
+    margin-bottom:25px;
+    justify-content:center;
+}
+
+.switch-btn{
+    padding:12px 24px;
+    border-radius:12px;
+    border:1px solid #2a3355;
+    background:#0b1020;
+    color:#8f98b3;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:600;
+    transition:.2s;
+}
+
+.switch-btn.active{
+    background:#2f7cff;
+    border-color:#2f7cff;
+    color:#fff;
+}
+
+.switch-btn:hover:not(.active){
+    background:#151d35;
+    color:#fff;
+}
+
+/* ОБЁРТКА КАРТОЧКИ */
+.card-wrapper{
+    display:flex;
+    justify-content:center;
+}
+
+.card-version{
+    display:none;
+}
+
+.card-version.active{
+    display:block;
+}
+
+/* ОСНОВНЫЕ СТИЛИ КАРТОЧКИ */
 .product-sidebar{
-    margin:auto;
     width:360px;
     display:flex;
     flex-direction:column;
     gap:20px;
 }
 
-/* ОБЩИЕ БЛОКИ */
 .product-box{
     background:#0b1020;
     border:1px solid #151d35;
@@ -39,7 +82,6 @@ body{
     box-shadow:0 0 15px rgba(0,0,0,.35);
 }
 
-/* ЦЕНА */
 .price-title{
     color:#9aa3bd;
     font-size:15px;
@@ -51,6 +93,29 @@ body{
     font-weight:700;
     color:#2f7cff;
     margin-bottom:15px;
+}
+
+/* БОНУСЫ */
+.bonus{
+    background:#111827;
+    border-radius:12px;
+    padding:14px;
+    margin-bottom:18px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:15px;
+    color:#a7b3d8;
+}
+
+.bonus i{
+    color:#f5a623;
+    font-size:20px;
+}
+
+.bonus span{
+    color:#f5a623;
+    font-weight:700;
 }
 
 .stock{
@@ -73,7 +138,6 @@ body{
     font-size:12px;
 }
 
-/* КНОПКИ */
 .btn{
     width:100%;
     border:none;
@@ -100,7 +164,16 @@ body{
     background:#4a8fff;
 }
 
-/* ТЕМНЫЕ КНОПКИ */
+.btn-cart{
+    background:#2f7cff;
+    color:#fff;
+    margin-bottom:14px;
+}
+
+.btn-cart:hover{
+    background:#4a8fff;
+}
+
 .btn-dark{
     background:#111827;
     border:1px solid #1d2945;
@@ -111,7 +184,6 @@ body{
     background:#18233d;
 }
 
-/* БЕЗОПАСНАЯ ОПЛАТА */
 .safe-pay{
     margin-top:22px;
     display:flex;
@@ -157,7 +229,7 @@ body{
 }
 
 /* ДЕМО */
-.demo-btn{
+.demo-wrap{
     margin-top:25px;
 }
 
@@ -240,6 +312,73 @@ body{
 .whatsapp{ background:#25D366; }
 .link{ background:#1b2238; }
 
+/* КОРЗИНА (ТОЛЬКО ВО ВТОРОЙ ВЕРСИИ) */
+.cart-panel{
+    margin-top:20px;
+    display:none;
+}
+
+.cart-panel.active{
+    display:block;
+}
+
+.cart-title{
+    font-size:18px;
+    font-weight:700;
+    margin-bottom:15px;
+    color:#a7b3d8;
+}
+
+.cart-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 0;
+    border-bottom:1px solid #141d35;
+    gap:15px;
+}
+
+.cart-item-name{
+    color:#fff;
+    font-weight:500;
+}
+
+.cart-item-price{
+    color:#2f7cff;
+    font-weight:700;
+    white-space:nowrap;
+}
+
+.cart-item-remove{
+    background:#1b1030;
+    border:none;
+    color:#ff4d6a;
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    cursor:pointer;
+    font-size:14px;
+    flex-shrink:0;
+}
+
+.cart-total{
+    display:flex;
+    justify-content:space-between;
+    margin-top:15px;
+    font-size:18px;
+    font-weight:700;
+}
+
+.cart-total span{
+    color:#2f7cff;
+}
+
+.cart-empty{
+    color:#8f98b3;
+    text-align:center;
+    padding:10px;
+}
+
 @media(max-width:480px){
     .product-sidebar{
         width:100%;
@@ -248,183 +387,348 @@ body{
     .price{
         font-size:38px;
     }
+    
+    .switcher{
+        flex-direction:column;
+        align-items:center;
+    }
+    
+    .switch-btn{
+        width:100%;
+        text-align:center;
+    }
 }
 </style>
 </head>
 <body>
 
-<div class="product-sidebar">
+<!-- ПЕРЕКЛЮЧАТЕЛИ ВЕРСИЙ -->
+<div class="switcher">
+    <button class="switch-btn active" onclick="switchVersion('v1', this)">
+        <i class="fa-solid fa-file"></i> Исходная версия
+    </button>
+    <button class="switch-btn" onclick="switchVersion('v2', this)">
+        <i class="fa-solid fa-star"></i> Версия с доработками
+    </button>
+</div>
 
-    <!-- 1 БЛОК -->
-    <div class="product-box">
+<!-- ОБЁРТКА КАРТОЧЕК -->
+<div class="card-wrapper">
 
-        <div class="price-title">Цена:</div>
+    <!-- ВЕРСИЯ 1: ИСХОДНАЯ (ПО УМОЛЧАНИЮ) -->
+    <div class="card-version active" id="version1">
+        <div class="product-sidebar">
 
-        <div class="price">1 290 ₽</div>
+            <!-- 1 БЛОК -->
+            <div class="product-box">
+                <div class="price-title">Цена:</div>
+                <div class="price">1 290 ₽</div>
 
-        <div class="stock">
-            <i class="fa-solid fa-check"></i>
-            В наличии
-        </div>
+                <div class="stock">
+                    <i class="fa-solid fa-check"></i>
+                    В наличии
+                </div>
 
-        <button class="btn btn-buy">
-            <i class="fa-solid fa-cart-shopping"></i>
-            Купить сейчас
-        </button>
+                <button class="btn btn-buy">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Купить сейчас
+                </button>
 
-        <button class="btn btn-dark">
-            <i class="fa-solid fa-basket-shopping"></i>
-            В корзину
-        </button>
+                <button class="btn btn-dark">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                    В корзину
+                </button>
 
-        <div class="safe-pay">
-            <i class="fa-solid fa-shield-halved"></i>
-
-            <div>
-                Безопасная оплата и моментальная выдача товара после покупки
+                <div class="safe-pay">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <div>
+                        Безопасная оплата и моментальная выдача товара после покупки
+                    </div>
+                </div>
             </div>
-        </div>
 
+            <!-- 2 БЛОК -->
+            <div class="product-box">
+                <div class="features">
+                    <div class="feature-item">
+                        <div class="feature-name">Версия DLE:</div>
+                        <div class="feature-value">16.0 и выше</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-name">Тип товара:</div>
+                        <div class="feature-value">Шаблон</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-name">Модульность:</div>
+                        <div class="feature-value">Нет</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-name">Дата добавления:</div>
+                        <div class="feature-value">22.05.2024</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-name">Просмотров:</div>
+                        <div class="feature-value">1 245</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-name">Покупок:</div>
+                        <div class="feature-value">89</div>
+                    </div>
+                </div>
+
+                <a href="#" class="btn btn-dark demo-wrap">
+                    Демо сайт
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+            </div>
+
+            <!-- АВТОР -->
+            <div class="product-box">
+                <div class="author">
+                    <div class="author-avatar">
+                        <img src="https://i.imgur.com/tX8g6wR.png" alt="">
+                    </div>
+                    <div class="author-info">
+                        <div class="author-label">Автор товара</div>
+                        <div class="author-name">Светлана</div>
+                        <div class="author-status">● Онлайн</div>
+                    </div>
+                </div>
+                <button class="btn btn-dark">
+                    Все товары автора
+                </button>
+            </div>
+
+            <!-- 3 БЛОК -->
+            <div class="product-box">
+                <div class="share-title">Поделиться товаром</div>
+                <div class="share-list">
+                    <a href="#" class="share-btn telegram">
+                        <i class="fa-brands fa-telegram"></i>
+                    </a>
+                    <a href="#" class="share-btn vk">
+                        <i class="fa-brands fa-vk"></i>
+                    </a>
+                    <a href="#" class="share-btn whatsapp">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </a>
+                    <a href="#" class="share-btn link">
+                        <i class="fa-solid fa-link"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
     </div>
 
-    <!-- 2 БЛОК -->
-    <div class="product-box">
+    <!-- ВЕРСИЯ 2: С ДОРАБОТКАМИ -->
+    <div class="card-version" id="version2">
+        <div class="product-sidebar">
 
-        <div class="features">
+            <!-- 1 БЛОК: ЦЕНА + КОРЗИНА -->
+            <div class="product-box">
+                <div class="price-title">Цена:</div>
+                <div class="price">1 290 ₽</div>
 
-            <div class="feature-item">
-                <div class="feature-name">
-                    Версия DLE:
+                <!-- БОНУСЫ ПОСЛЕ ПОКУПКИ -->
+                <div class="bonus">
+                    <i class="fa-solid fa-gift"></i>
+                    После покупки вы получите <span>+129 бонусов</span> на счёт
                 </div>
 
-                <div class="feature-value">
-                    16.0 и выше
-                </div>
-            </div>
-
-            <div class="feature-item">
-                <div class="feature-name">
-                    Тип товара:
+                <div class="stock">
+                    <i class="fa-solid fa-check"></i>
+                    В наличии
                 </div>
 
-                <div class="feature-value">
-                    Шаблон
-                </div>
-            </div>
+                <!-- КНОПКА ДОБАВИТЬ В КОРЗИНУ -->
+                <button class="btn btn-cart" onclick="addToCart('Шаблон DLE 16.0+', 1290)">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                    В корзину
+                </button>
 
-            <div class="feature-item">
-                <div class="feature-name">
-                    Модульность:
-                </div>
-
-                <div class="feature-value">
-                    Нет
-                </div>
-            </div>
-
-            <div class="feature-item">
-                <div class="feature-name">
-                    Дата добавления:
+                <div class="safe-pay">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <div>
+                        Безопасная оплата и моментальная выдача товара после покупки
+                    </div>
                 </div>
 
-                <div class="feature-value">
-                    22.05.2024
-                </div>
-            </div>
-
-            <div class="feature-item">
-                <div class="feature-name">
-                    Просмотров:
-                </div>
-
-                <div class="feature-value">
-                    1 245
+                <!-- КОРЗИНА (ВЫВОД) -->
+                <div class="cart-panel" id="cartPanel">
+                    <div class="cart-title">
+                        <i class="fa-solid fa-basket-shopping"></i> Корзина
+                    </div>
+                    <div id="cartItems"></div>
+                    <div class="cart-total" id="cartTotal" style="display:none;">
+                        Итого: <span id="cartSum">0 ₽</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="feature-item">
-                <div class="feature-name">
-                    Покупок:
+            <!-- 2 БЛОК: ХАРАКТЕРИСТИКИ + ДЕМО -->
+            <div class="product-box">
+                <div class="features" id="featuresContainer">
+                    <!-- Характеристики грузятся динамически через JS -->
                 </div>
 
-                <div class="feature-value">
-                    89
+                <!-- ДЕМО-КНОПКА (ПОКАЗЫВАЕТСЯ ТОЛЬКО ЕСЛИ ЕСТЬ ССЫЛКА) -->
+                <div class="demo-wrap" id="demoWrap" style="display:none;">
+                    <a href="#" class="btn btn-dark" id="demoLink">
+                        Демо сайт
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
                 </div>
             </div>
 
-        </div>
-
-        <!-- ЕСЛИ ЕСТЬ ССЫЛКА -->
-        <a href="#" class="btn btn-dark demo-btn">
-            Демо сайт
-            <i class="fa-solid fa-arrow-up-right-from-square"></i>
-        </a>
-
-    </div>
-
-    <!-- АВТОР -->
-    <div class="product-box">
-
-        <div class="author">
-
-            <div class="author-avatar">
-                <img src="https://i.imgur.com/tX8g6wR.png" alt="">
+            <!-- АВТОР -->
+            <div class="product-box">
+                <div class="author">
+                    <div class="author-avatar">
+                        <img src="https://i.imgur.com/tX8g6wR.png" alt="">
+                    </div>
+                    <div class="author-info">
+                        <div class="author-label">Автор товара</div>
+                        <div class="author-name">Светлана</div>
+                        <div class="author-status">● Онлайн</div>
+                    </div>
+                </div>
+                <button class="btn btn-dark">
+                    Все товары автора
+                </button>
             </div>
 
-            <div class="author-info">
-
-                <div class="author-label">
-                    Автор товара
+            <!-- 3 БЛОК: ПОДЕЛИТЬСЯ -->
+            <div class="product-box">
+                <div class="share-title">Поделиться товаром</div>
+                <div class="share-list">
+                    <a href="#" class="share-btn telegram">
+                        <i class="fa-brands fa-telegram"></i>
+                    </a>
+                    <a href="#" class="share-btn vk">
+                        <i class="fa-brands fa-vk"></i>
+                    </a>
+                    <a href="#" class="share-btn whatsapp">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </a>
+                    <a href="#" class="share-btn link">
+                        <i class="fa-solid fa-link"></i>
+                    </a>
                 </div>
-
-                <div class="author-name">
-                    Светлана
-                </div>
-
-                <div class="author-status">
-                    ● Онлайн
-                </div>
-
             </div>
 
         </div>
-
-        <button class="btn btn-dark">
-            Все товары автора
-        </button>
-
-    </div>
-
-    <!-- 3 БЛОК -->
-    <div class="product-box">
-
-        <div class="share-title">
-            Поделиться товаром
-        </div>
-
-        <div class="share-list">
-
-            <a href="#" class="share-btn telegram">
-                <i class="fa-brands fa-telegram"></i>
-            </a>
-
-            <a href="#" class="share-btn vk">
-                <i class="fa-brands fa-vk"></i>
-            </a>
-
-            <a href="#" class="share-btn whatsapp">
-                <i class="fa-brands fa-whatsapp"></i>
-            </a>
-
-            <a href="#" class="share-btn link">
-                <i class="fa-solid fa-link"></i>
-            </a>
-
-        </div>
-
     </div>
 
 </div>
+
+<script>
+// ========================
+// ПЕРЕКЛЮЧЕНИЕ ВЕРСИЙ
+// ========================
+function switchVersion(version, btn) {
+    // Убираем active со всех кнопок и версий
+    document.querySelectorAll('.switch-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.card-version').forEach(c => c.classList.remove('active'));
+    
+    // Включаем нужную
+    btn.classList.add('active');
+    document.getElementById('version' + (version === 'v1' ? '1' : '2')).classList.add('active');
+}
+
+// ========================
+// ДАННЫЕ ТОВАРА ДЛЯ ВЕРСИИ 2
+// ========================
+const productData = {
+    price: 1290,
+    bonusPercent: 10,
+    demoUrl: 'https://demo.site.ru',  // если пусто — кнопка не покажется
+    features: [
+        { name: 'Версия DLE:', value: '16.0 и выше' },
+        { name: 'Тип товара:', value: 'Шаблон' },
+        { name: 'Модульность:', value: 'Нет' },
+        { name: 'Дата добавления:', value: '22.05.2024' },
+        { name: 'Просмотров:', value: '1 245' },
+        { name: 'Покупок:', value: '89' }
+    ]
+};
+
+// ========================
+// ВЫВОД ХАРАКТЕРИСТИК (ВЕРСИЯ 2)
+// ========================
+const featuresContainer = document.getElementById('featuresContainer');
+productData.features.forEach(f => {
+    const item = document.createElement('div');
+    item.className = 'feature-item';
+    item.innerHTML = `
+        <div class="feature-name">${f.name}</div>
+        <div class="feature-value">${f.value}</div>
+    `;
+    featuresContainer.appendChild(item);
+});
+
+// ========================
+// УСЛОВНЫЙ ПОКАЗ ДЕМО-КНОПКИ (ВЕРСИЯ 2)
+// ========================
+const demoWrap = document.getElementById('demoWrap');
+const demoLink = document.getElementById('demoLink');
+if (productData.demoUrl && productData.demoUrl.trim() !== '') {
+    demoWrap.style.display = 'block';
+    demoLink.href = productData.demoUrl;
+} else {
+    demoWrap.style.display = 'none';
+}
+
+// ========================
+// КОРЗИНА (ТОЛЬКО ВЕРСИЯ 2)
+// ========================
+let cart = [];
+
+function addToCart(name, price) {
+    cart.push({ name, price });
+    renderCart();
+}
+
+function removeFromCart(index) {
+    cart.splice(index, 1);
+    renderCart();
+}
+
+function renderCart() {
+    const cartPanel = document.getElementById('cartPanel');
+    const cartItems = document.getElementById('cartItems');
+    const cartTotal = document.getElementById('cartTotal');
+    const cartSum = document.getElementById('cartSum');
+
+    if (cart.length === 0) {
+        cartPanel.classList.remove('active');
+        cartItems.innerHTML = '';
+        cartTotal.style.display = 'none';
+        return;
+    }
+
+    cartPanel.classList.add('active');
+    cartTotal.style.display = 'flex';
+
+    let html = '';
+    let sum = 0;
+    cart.forEach((item, i) => {
+        sum += item.price;
+        html += `
+            <div class="cart-item">
+                <div class="cart-item-name">${item.name}</div>
+                <div class="cart-item-price">${item.price} ₽</div>
+                <button class="cart-item-remove" onclick="removeFromCart(${i})">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        `;
+    });
+
+    cartItems.innerHTML = html;
+    cartSum.textContent = sum + ' ₽';
+}
+</script>
 
 </body>
 </html>
